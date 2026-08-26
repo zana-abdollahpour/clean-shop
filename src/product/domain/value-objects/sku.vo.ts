@@ -1,5 +1,6 @@
+export const SKU_PATTERN = /^[A-Za-z0-9-]+$/;
+
 export class Sku {
-  private static readonly SKU_PATTERN = /^[A-Za-z0-9-]+$/;
   private static readonly MIN_LENGTH = 3;
   private static readonly MAX_LENGTH = 50;
 
@@ -18,7 +19,7 @@ export class Sku {
       );
     }
 
-    if (!Sku.SKU_PATTERN.test(trimmed)) {
+    if (!SKU_PATTERN.test(trimmed)) {
       throw new Error('Sku must contain only alphabetic characters and dashes');
     }
 
