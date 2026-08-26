@@ -1,9 +1,12 @@
+import { SQL, and, eq, gte, lte } from 'drizzle-orm';
 import { Inject, Injectable } from '@nestjs/common';
 
+import { Money } from 'src/shared/domain/value-objects/money.vo';
 import { products } from 'src/shared/infrastructure/database/postgres/schema/products.schema';
 import { DRIZZLE } from 'src/shared/infrastructure/database/postgres/drizzle.provider';
 import type { DrizzleDB } from 'src/shared/infrastructure/database/postgres/drizzle.provider';
 
+import { Sku } from 'src/product/domain/value-objects/sku.vo';
 import { Product } from 'src/product/domain/entities/product.entity';
 import { ProductId } from 'src/product/domain/value-objects/product-id.vo';
 import {
@@ -31,6 +34,21 @@ export class DrizzleProductRepository implements ProductRepository {
     };
   }
 
+  private static toDomain(row: typeof products.$inferSelect): Product {
+    return Product.reconstitute({
+      id: new ProductId(row.id),
+      name: row.name,
+      description: row.description,
+      sku: Sku.create(row.sku),
+      stock: row.stock,
+      price: Money.create(row.priceAmount / 100, row.priceCurrency),
+      isActive: row.isActive,
+      lowStockThreshold: row.lowStockThreshold,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+    });
+  }
+
   async save(product: Product): Promise<void> {
     const row = DrizzleProductRepository.toPersistence(product);
 
@@ -53,11 +71,45 @@ export class DrizzleProductRepository implements ProductRepository {
       });
   }
 
-  findById(id: ProductId): Promise<Product | null> {
-    throw new Error('Method not implemented.');
+  async findById(id: ProductId): Promise<Product | null> {
+    const rows = await this.db
+      .select()
+      .from(products)
+      .where(eq(products.id, id.getValue()));
+
+    if (!rows.length) {
+      return null;
+    }
+
+    return DrizzleProductRepository.toDomain(rows[0]);
   }
 
-  findAll(filters: ProductFilters): Promise<Product[]> {
-    throw new Error('Method not implemented.');
+  async findAll(filters: ProductFilters): Promise<Product[]> {
+    const conditions: SQL[] = [];
+
+    if (filters?.isActive !== undefined) {
+      conditions.push(eq(products.isActive, filters.isActive));
+    }
+
+    if (filters?.maxPrice !== undefined) {
+      conditions.push(
+        lte(products.priceAmount, Math.round(filters.maxPrice * 100)),
+      );
+    }
+
+    if (filters?.minPrice !== undefined) {
+      conditions.push(
+        gte(products.priceAmount, Math.round(filters.minPrice * 100)),
+      );
+    }
+
+    const baseQuery = this.db.select().from(products);
+    const query = conditions.length
+      ? baseQuery.where(and(...conditions))
+      : baseQuery;
+
+    const productRows = await query;
+
+    return productRows.map((row) => DrizzleProductRepository.toDomain(row));
   }
 }
