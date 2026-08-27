@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
 
+import { commandHandlers } from 'src/product/application/use-cases';
+import { queryHandlers } from 'src/product/application/queries';
+
 import { PRODUCT_REPOSITORY } from 'src/product/application/ports/product.repository.port';
 import { DrizzleProductRepository } from 'src/product/infrastructure/adapters/drizzle-product.repository';
-import { commandHandlers } from 'src/product/application';
 
 import { ProductsController } from './presentation/product.controller';
 
@@ -12,6 +14,7 @@ import { ProductsController } from './presentation/product.controller';
   controllers: [ProductsController],
   providers: [
     ...commandHandlers,
+    ...queryHandlers,
     {
       provide: PRODUCT_REPOSITORY,
       useClass: DrizzleProductRepository,

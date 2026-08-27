@@ -13,7 +13,7 @@ export class ProductResponseDto {
   createdAt!: string;
   updatedAt!: string;
 
-  static fromDomain(product: Product): ProductResponseDto {
+  static fromDomain(this: void, product: Product): ProductResponseDto {
     const dto = new ProductResponseDto();
 
     dto.id = product.id.getValue();
