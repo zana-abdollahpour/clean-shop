@@ -10,7 +10,10 @@ import {
 import { ListProductsQuery } from './list-products.query';
 
 @QueryHandler(ListProductsQuery)
-export class ListProductsHandler implements IQueryHandler<ListProductsQuery> {
+export class ListProductsHandler implements IQueryHandler<
+  ListProductsQuery,
+  Product[]
+> {
   constructor(
     @Inject(PRODUCT_REPOSITORY)
     private readonly productsRepository: ProductRepository,
