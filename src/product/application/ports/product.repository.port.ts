@@ -20,4 +20,6 @@ export interface ProductRepository {
   findByName(name: string): Promise<Product | null>;
 
   findAll(filters: ProductFilters): Promise<Product[]>;
+
+  deleteById(id: ProductId): Promise<void>;
 }
