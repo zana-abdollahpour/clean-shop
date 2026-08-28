@@ -1,5 +1,6 @@
 import { Inject } from '@nestjs/common';
-import { Collection, Db } from 'mongodb';
+import { Collection, Db, Filter } from 'mongodb';
+
 import {
   ProductFilters,
   ProductRepository,
@@ -63,27 +64,73 @@ export class MongoProductRepository implements ProductRepository {
     });
   }
 
-  save(product: Product): Promise<void> {
-    throw new Error('Method not implemented.');
+  async save(product: Product): Promise<void> {
+    const doc = MongoProductRepository.toPersistence(product);
+
+    await this.collection.updateOne(
+      { _id: doc._id },
+      { $set: doc },
+      { upsert: true },
+    );
   }
 
-  findById(id: ProductId): Promise<Product | null> {
-    throw new Error('Method not implemented.');
+  async findById(id: ProductId): Promise<Product | null> {
+    const doc = await this.collection.findOne({ _id: id.getValue() });
+
+    if (!doc) {
+      return null;
+    }
+
+    return MongoProductRepository.toDomain(doc);
   }
 
-  findBySku(sku: Sku): Promise<Product | null> {
-    throw new Error('Method not implemented.');
+  async findBySku(sku: Sku): Promise<Product | null> {
+    const doc = await this.collection.findOne({ sku: sku.getValue() });
+
+    if (!doc) {
+      return null;
+    }
+
+    return MongoProductRepository.toDomain(doc);
   }
 
-  findByName(name: string): Promise<Product | null> {
-    throw new Error('Method not implemented.');
+  async findByName(name: string): Promise<Product | null> {
+    const doc = await this.collection.findOne({ name });
+
+    if (!doc) {
+      return null;
+    }
+
+    return MongoProductRepository.toDomain(doc);
   }
 
-  findAll(filters: ProductFilters): Promise<Product[]> {
-    throw new Error('Method not implemented.');
+  async findAll(filters: ProductFilters): Promise<Product[]> {
+    const { isActive, minPrice, maxPrice } = filters;
+
+    const query: Filter<ProductDocument> = {};
+
+    if (isActive !== undefined) {
+      query.isActive = isActive;
+    }
+
+    if (minPrice !== undefined || maxPrice !== undefined) {
+      query.priceAmount = {};
+
+      if (minPrice !== undefined) {
+        query.priceAmount.$gte = Math.round(minPrice * 100);
+      }
+
+      if (maxPrice !== undefined) {
+        query.priceAmount.$lte = Math.round(maxPrice * 100);
+      }
+    }
+
+    const docs = await this.collection.find(query).toArray();
+
+    return docs.map((doc) => MongoProductRepository.toDomain(doc));
   }
 
-  deleteById(id: ProductId): Promise<void> {
-    throw new Error('Method not implemented.');
+  async deleteById(id: ProductId): Promise<void> {
+    await this.collection.deleteOne({ _id: id.getValue() });
   }
 }
