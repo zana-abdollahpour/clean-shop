@@ -6,6 +6,7 @@ import { MongoModule } from 'src/shared/infrastructure/database/mongodb/mongo.mo
 import { DrizzleModule } from 'src/shared/infrastructure/database/postgres/drizzle.module';
 
 import { ProductModule } from 'src/product/product.module';
+import { CustomerModule } from 'src/customer/customer.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { ProductModule } from 'src/product/product.module';
     MongoModule,
     DrizzleModule,
     ProductModule,
+    CustomerModule,
   ],
   controllers: [],
   providers: [],

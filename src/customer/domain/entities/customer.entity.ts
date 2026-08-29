@@ -9,7 +9,7 @@ interface CustomerProps {
   firstName: string;
   lastName: string;
   isActive: boolean;
-  phone: string | null;
+  phone: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -20,7 +20,7 @@ export class Customer extends AggregateRoot {
   private _firstName: string;
   private _lastName: string;
   private _isActive: boolean;
-  private _phone: string | null;
+  private _phone: string;
   private readonly _createdAt: Date;
   private _updatedAt: Date;
 
