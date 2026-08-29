@@ -14,7 +14,7 @@ import { Customer } from 'src/customer/domain/entities/customer.entity';
 import { RegisterCustomerDto } from 'src/customer/presentation/dto/register-customer.dto';
 import { CustomerResponseDto } from 'src/customer/presentation/dto/customer-response.dto';
 
-import { RegisterCustomerCommand } from 'src/customer/application/use-cases/register-customer/register-customer.handler';
+import { RegisterCustomerCommand } from 'src/customer/application/use-cases/register-customer/register-customer.command';
 import { listCustomersQuery } from 'src/customer/application/queries/list-customers/list-customers.query';
 import { GetCustomerQuery } from 'src/customer/application/queries/get-customer/get-customer.query';
 import { DeleteCustomerCommand } from 'src/customer/application/use-cases/delete-customer/delete-customer.command';
