@@ -1,3 +1,4 @@
+import { customers } from './customer.schema';
 import { products } from './products.schema';
 
-export const schema = { products };
+export const schema = { customers, products };
