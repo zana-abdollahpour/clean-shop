@@ -4,7 +4,7 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { Product } from 'src/product/domain/entities/product.entity';
 import {
   PRODUCT_REPOSITORY,
-  ProductRepository,
+  ProductRepositoryPort,
 } from 'src/product/application/ports/product.repository.port';
 
 import { ListProductsQuery } from './list-products.query';
@@ -16,7 +16,7 @@ export class ListProductsHandler implements IQueryHandler<
 > {
   constructor(
     @Inject(PRODUCT_REPOSITORY)
-    private readonly productsRepository: ProductRepository,
+    private readonly productsRepository: ProductRepositoryPort,
   ) {}
 
   execute(query: ListProductsQuery): Promise<Product[]> {

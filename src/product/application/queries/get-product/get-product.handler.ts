@@ -5,7 +5,7 @@ import { ProductId } from 'src/product/domain/value-objects/product-id.vo';
 import { Product } from 'src/product/domain/entities/product.entity';
 import {
   PRODUCT_REPOSITORY,
-  ProductRepository,
+  ProductRepositoryPort,
 } from 'src/product/application/ports/product.repository.port';
 
 import {
@@ -22,7 +22,7 @@ export class GetProductHandler implements IQueryHandler<
 > {
   constructor(
     @Inject(PRODUCT_REPOSITORY)
-    private readonly productsRepository: ProductRepository,
+    private readonly productsRepository: ProductRepositoryPort,
   ) {}
 
   async execute(query: GetProductQuery): Promise<Product> {

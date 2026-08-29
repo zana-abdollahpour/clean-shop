@@ -3,7 +3,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { DeleteProductCommand } from './delete-product.command';
 import {
   PRODUCT_REPOSITORY,
-  ProductRepository,
+  ProductRepositoryPort,
 } from 'src/product/application/ports/product.repository.port';
 import { Inject } from '@nestjs/common';
 import { ProductId } from 'src/product/domain/value-objects/product-id.vo';
@@ -19,7 +19,7 @@ export class DeleteProductHandler implements ICommandHandler<
 > {
   constructor(
     @Inject(PRODUCT_REPOSITORY)
-    private readonly productRepository: ProductRepository,
+    private readonly productRepository: ProductRepositoryPort,
   ) {}
 
   async execute(command: DeleteProductCommand): Promise<void> {

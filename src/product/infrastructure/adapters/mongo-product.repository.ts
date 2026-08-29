@@ -3,7 +3,7 @@ import { Collection, Db, Filter } from 'mongodb';
 
 import {
   ProductFilters,
-  ProductRepository,
+  ProductRepositoryPort,
 } from 'src/product/application/ports/product.repository.port';
 
 import { Product } from 'src/product/domain/entities/product.entity';
@@ -26,7 +26,7 @@ interface ProductDocument {
   updatedAt: Date;
 }
 
-export class MongoProductRepository implements ProductRepository {
+export class MongoProductRepository implements ProductRepositoryPort {
   private readonly collection: Collection<ProductDocument>;
 
   constructor(@Inject(MONGO_DB) private readonly db: Db) {

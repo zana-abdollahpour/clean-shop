@@ -11,11 +11,11 @@ import { Product } from 'src/product/domain/entities/product.entity';
 import { ProductId } from 'src/product/domain/value-objects/product-id.vo';
 import {
   ProductFilters,
-  ProductRepository,
+  ProductRepositoryPort,
 } from 'src/product/application/ports/product.repository.port';
 
 @Injectable()
-export class DrizzleProductRepository implements ProductRepository {
+export class DrizzleProductRepository implements ProductRepositoryPort {
   constructor(@Inject(DRIZZLE) private readonly db: DrizzleDB) {}
 
   private static toPersistence(product: Product): typeof products.$inferSelect {
