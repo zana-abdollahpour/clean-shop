@@ -7,6 +7,9 @@ import { CustomerController } from 'src/customer/presentation/customer.controlle
 import { CUSTOMER_REPOSITORY } from 'src/customer/application/ports/customer-repository.port';
 import { DrizzleCustomerRepository } from 'src/customer/infrastructure/adapters/drizzle-customer.repository';
 
+import { NOTIFICATION_SERVICE } from 'src/customer/application/ports/notification.port';
+import { ConsoleNotificationAdapter } from 'src/customer/infrastructure/adapters/console-notification.adapter';
+
 @Module({
   controllers: [CustomerController],
   providers: [
@@ -15,6 +18,10 @@ import { DrizzleCustomerRepository } from 'src/customer/infrastructure/adapters/
     {
       provide: CUSTOMER_REPOSITORY,
       useClass: DrizzleCustomerRepository,
+    },
+    {
+      provide: NOTIFICATION_SERVICE,
+      useClass: ConsoleNotificationAdapter,
     },
   ],
 })
