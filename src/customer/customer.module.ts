@@ -10,6 +10,7 @@ import { DrizzleCustomerRepository } from 'src/customer/infrastructure/adapters/
 
 import { NOTIFICATION_SERVICE } from 'src/customer/application/ports/notification.port';
 import { ConsoleNotificationAdapter } from 'src/customer/infrastructure/adapters/console-notification.adapter';
+import { NodeMailerEmailAdapter } from 'src/customer/infrastructure/adapters/nodemailer-notification.adapter';
 
 @Module({
   controllers: [CustomerController],
@@ -23,7 +24,10 @@ import { ConsoleNotificationAdapter } from 'src/customer/infrastructure/adapters
     },
     {
       provide: NOTIFICATION_SERVICE,
-      useClass: ConsoleNotificationAdapter,
+      useClass:
+        process.env.NODE_ENV === 'production'
+          ? NodeMailerEmailAdapter
+          : ConsoleNotificationAdapter,
     },
   ],
 })
