@@ -4,12 +4,16 @@ import { and, eq, notInArray, sql } from 'drizzle-orm';
 import { OrderRepositoryPort } from 'src/order/application/ports/order-repository.port';
 import { Order } from 'src/order/domain/entities/order.entity';
 import { OrderId } from 'src/order/domain/value-objects/order-id.vo';
+import { OrderStatus } from 'src/order/domain/value-objects/order-status.vo';
+import { OrderItem } from 'src/order/domain/entities/order-item.entity';
 import {
   orderItems,
   orders,
 } from 'src/shared/infrastructure/database/postgres/schema/orders.schema';
 
-import { OrderItem } from 'src/order/domain/entities/order-item.entity';
+import { Money } from 'src/shared/domain/value-objects/money.vo';
+import { UniqueId } from 'src/shared/domain/value-objects/unique-id.vo';
+import { ShippingAddress } from 'src/order/domain/value-objects/shipping-address.vo';
 import {
   DRIZZLE,
   DrizzleDB,
@@ -37,6 +41,50 @@ export class DrizzleOrderRepository implements OrderRepositoryPort {
       createdAt: order.createdAt,
       updatedAt: order.updatedAt,
     };
+  }
+
+  private static toDomain(
+    orderRow: typeof orders.$inferSelect,
+    itemRows: (typeof orderItems.$inferInsert)[],
+  ): Order {
+    const items = itemRows.map((row) => {
+      const discount =
+        row.discountAmount !== null && row.discountCurrency !== null
+          ? Money.create(row.discountAmount! / 100, row.discountCurrency)
+          : null;
+
+      return OrderItem.reconstitute({
+        id: new UniqueId(row.id),
+        productId: row.productId,
+        productName: row.productName,
+        unitPrice: Money.create(
+          row.unitPriceAmount / 100,
+          row.unitPriceCurrency,
+        ),
+        quantity: row.quantity,
+        discount: discount,
+      });
+    });
+
+    const shippingAddress = ShippingAddress.create({
+      street: orderRow.shippingStreet ?? '',
+      city: orderRow.shippingCity ?? '',
+      state: orderRow.shippingState ?? '',
+      zipCode: orderRow.shippingZipCode ?? '',
+      country: orderRow.shippingCountry ?? '',
+    });
+
+    return Order.reconstitute({
+      id: new OrderId(orderRow.id),
+      customerId: orderRow.customerId,
+      status: OrderStatus.fromString(orderRow.status),
+      items: items,
+      shippingAddress,
+      trackingNumber: orderRow.trackingNumber,
+      notes: orderRow.notes,
+      createdAt: orderRow.createdAt,
+      updatedAt: orderRow.updatedAt,
+    });
   }
 
   private static toItemPersistence(item: OrderItem, orderId: string) {
@@ -114,19 +162,59 @@ export class DrizzleOrderRepository implements OrderRepositoryPort {
     });
   }
 
-  findById(id: OrderId): Promise<Order | null> {
-    throw new Error('Method not implemented.');
+  async findById(id: OrderId): Promise<Order | null> {
+    /* for reference, without relations
+    const orderRows = await this.db
+      .select()
+      .from(orders)
+      .where(eq(orders.id, id.getValue()));
+
+    if (!orderRows.length) {
+      return null;
+    }
+
+    const itemsRows = await this.db
+      .select()
+      .from(orderItems)
+      .where(eq(orderItems.orderId, id.getValue()));
+
+      return DrizzleOrderRepository.toDomain(orderRows[0], itemsRows);
+      */
+
+    const result = await this.db.query.orders.findFirst({
+      where: eq(orders.id, id.getValue()),
+      with: { items: true },
+    });
+
+    if (!result) {
+      return null;
+    }
+
+    return DrizzleOrderRepository.toDomain(result, result.items);
   }
 
-  findCustomerById(customerId: string): Promise<Order[] | null> {
-    throw new Error('Method not implemented.');
+  async findByCustomerId(customerId: string): Promise<Order[] | null> {
+    const results = await this.db.query.orders.findMany({
+      where: eq(orders.customerId, customerId),
+      with: { items: true },
+    });
+
+    return results.map((result) =>
+      DrizzleOrderRepository.toDomain(result, result.items),
+    );
   }
 
-  findAll(id: OrderId): Promise<void> {
-    throw new Error('Method not implemented.');
+  async findAll(): Promise<Order[]> {
+    const results = await this.db.query.orders.findMany({
+      with: { items: true },
+    });
+
+    return results.map((result) =>
+      DrizzleOrderRepository.toDomain(result, result.items),
+    );
   }
 
-  delete(id: OrderId): Promise<void> {
-    throw new Error('Method not implemented.');
+  async delete(id: OrderId): Promise<void> {
+    await this.db.delete(orders).where(eq(orders.id, id.getValue()));
   }
 }

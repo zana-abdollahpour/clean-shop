@@ -1,6 +1,12 @@
 import { customers } from './customer.schema';
 import { products } from './products.schema';
-import { orders, orderItems, orderStatusEnum } from './orders.schema';
+import {
+  orders,
+  orderItems,
+  orderStatusEnum,
+  ordersRelations,
+  orderItemRelations,
+} from './orders.schema';
 
 export const schema = {
   customers,
@@ -8,4 +14,6 @@ export const schema = {
   orders,
   orderItems,
   orderStatusEnum,
+  ordersRelations,
+  orderItemRelations,
 };

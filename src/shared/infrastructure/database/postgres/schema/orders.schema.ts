@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm';
 import { uuid } from 'drizzle-orm/pg-core';
 import {
   pgTable,
@@ -45,7 +46,7 @@ export const orderItems = pgTable('order_items', {
   id: uuid('id').primaryKey(),
   orderId: uuid('order_id')
     .notNull()
-    .references(() => orders.id),
+    .references(() => orders.id, { onDelete: 'cascade' }),
   productId: uuid('product_id')
     .notNull()
     .references(() => products.id),
@@ -59,3 +60,14 @@ export const orderItems = pgTable('order_items', {
   discountCurrency: varchar('discount_currency', { length: 3 }),
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });
+
+export const ordersRelations = relations(orders, ({ many }) => ({
+  items: many(orderItems),
+}));
+
+export const orderItemRelations = relations(orderItems, ({ one }) => ({
+  order: one(orders, {
+    fields: [orderItems.orderId],
+    references: [orders.id],
+  }),
+}));

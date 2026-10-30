@@ -6,7 +6,7 @@ export const ORDER_REPOSITORY = Symbol('ORDER_REPOSITORY');
 export interface OrderRepositoryPort {
   save(order: Order): Promise<void>;
   findById(id: OrderId): Promise<Order | null>;
-  findCustomerById(customerId: string): Promise<Order[] | null>;
-  findAll(id: OrderId): Promise<void>;
+  findByCustomerId(customerId: string): Promise<Order[] | null>;
+  findAll(): Promise<Order[]>;
   delete(id: OrderId): Promise<void>;
 }
