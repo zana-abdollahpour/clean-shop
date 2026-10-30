@@ -16,6 +16,10 @@ export class Money {
     return new Money(normalizedAmount, currency.toUpperCase());
   }
 
+  static zero(currency = 'USD') {
+    return new Money(0, currency.toUpperCase());
+  }
+
   private assertSameCurrency(other: Money) {
     if (this.currency !== other.currency) {
       throw new DomainException(
@@ -26,6 +30,11 @@ export class Money {
 
   static fromCents(cents: number, currency: string = 'USD'): Money {
     return new Money(cents / 100, currency.toUpperCase());
+  }
+
+  add(other: Money): Money {
+    this.assertSameCurrency(other);
+    return Money.create(this.amount + other.amount, this.currency);
   }
 
   multiply(factor: number): Money {
