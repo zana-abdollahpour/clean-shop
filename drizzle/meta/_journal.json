@@ -15,6 +15,13 @@
       "when": 1787989014639,
       "tag": "0001_amusing_swarm",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793358301202,
+      "tag": "0002_handy_bucky",
+      "breakpoints": true
     }
   ]
 }
