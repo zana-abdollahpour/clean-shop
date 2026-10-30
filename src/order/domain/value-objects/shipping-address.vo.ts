@@ -55,23 +55,23 @@ export class ShippingAddress {
     });
   }
 
-  getStreet(): string {
+  get street(): string {
     return this._street;
   }
 
-  getCity(): string {
+  get city(): string {
     return this._city;
   }
 
-  getState(): string {
+  get state(): string {
     return this._state;
   }
 
-  getZipCode(): string {
+  get zipcode(): string {
     return this._zipCode;
   }
 
-  getCountry(): string {
+  get country(): string {
     return this._country;
   }
 

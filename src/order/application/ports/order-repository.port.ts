@@ -3,7 +3,7 @@ import { OrderId } from 'src/order/domain/value-objects/order-id.vo';
 
 export const ORDER_REPOSITORY = Symbol('ORDER_REPOSITORY');
 
-export interface RepositoryPort {
+export interface OrderRepositoryPort {
   save(order: Order): Promise<void>;
   findById(id: OrderId): Promise<Order | null>;
   findCustomerById(customerId: string): Promise<Order[] | null>;
