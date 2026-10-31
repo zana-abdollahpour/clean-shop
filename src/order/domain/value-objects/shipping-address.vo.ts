@@ -67,7 +67,7 @@ export class ShippingAddress {
     return this._state;
   }
 
-  get zipcode(): string {
+  get zipCode(): string {
     return this._zipCode;
   }
 

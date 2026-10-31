@@ -88,6 +88,10 @@ export class Order extends AggregateRoot {
     return this.getSubtotal();
   }
 
+  getItemCount(): number {
+    return this._items.reduce((sum, item) => sum + item.quantity, 0);
+  }
+
   get id(): OrderId {
     return this._id;
   }

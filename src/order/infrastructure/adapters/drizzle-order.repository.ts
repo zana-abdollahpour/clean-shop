@@ -34,7 +34,7 @@ export class DrizzleOrderRepository implements OrderRepositoryPort {
       shippingStreet: order.shippingAddress.street,
       shippingCity: order.shippingAddress.city,
       shippingState: order.shippingAddress.state,
-      shippingZipCode: order.shippingAddress.zipcode,
+      shippingZipCode: order.shippingAddress.zipCode,
       shippingCountry: order.shippingAddress.country,
       trackingNumber: order.trackingNumber,
       notes: order.notes,
