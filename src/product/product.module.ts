@@ -41,5 +41,6 @@ import { ProductsController } from './presentation/product.controller';
       },
     },
   ],
+  exports: [PRODUCT_REPOSITORY],
 })
 export class ProductModule {}
