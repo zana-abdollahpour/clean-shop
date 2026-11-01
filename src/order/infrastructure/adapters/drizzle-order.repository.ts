@@ -193,7 +193,7 @@ export class DrizzleOrderRepository implements OrderRepositoryPort {
     return DrizzleOrderRepository.toDomain(result, result.items);
   }
 
-  async findByCustomerId(customerId: string): Promise<Order[] | null> {
+  async findByCustomerId(customerId: string): Promise<Order[]> {
     const results = await this.db.query.orders.findMany({
       where: eq(orders.customerId, customerId),
       with: { items: true },

@@ -22,7 +22,10 @@ import {
 } from 'src/shared/domain/exception/application.exception';
 
 @CommandHandler(PlaceOrderCommand)
-export class PlaceOrderHandler implements ICommandHandler<PlaceOrderCommand> {
+export class PlaceOrderHandler implements ICommandHandler<
+  PlaceOrderCommand,
+  void
+> {
   constructor(
     @Inject(ORDER_REPOSITORY)
     private readonly orderRepository: OrderRepositoryPort,
@@ -31,7 +34,7 @@ export class PlaceOrderHandler implements ICommandHandler<PlaceOrderCommand> {
     private readonly eventPublisher: EventPublisher,
   ) {}
 
-  async execute(command: PlaceOrderCommand): Promise<any> {
+  async execute(command: PlaceOrderCommand): Promise<void> {
     const customerExists = await this.customer.exists(command.customerId);
     if (!customerExists) {
       throw new ApplicationException(

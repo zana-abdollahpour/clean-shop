@@ -1,6 +1,18 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { GetOrderQuery } from 'src/order/application/queries/get-order.query';
+import { ListOrdersQuery } from 'src/order/application/queries/list-orders.query';
 import { PlaceOrderCommand } from 'src/order/application/use-cases/place-order/place-order.command';
+import { Order } from 'src/order/domain/entities/order.entity';
+import { OrderResponseDto } from 'src/order/presentation/dtos/order-response.dto';
 
 import { PlaceOrderDto } from 'src/order/presentation/dtos/place-order.dto';
 
@@ -30,5 +42,27 @@ export class OrderController {
         dto.shippingCountry,
       ),
     );
+  }
+
+  @Get()
+  async findAll(
+    @Query('customerId') customerId: string,
+  ): Promise<OrderResponseDto[]> {
+    const orders = await this.queryBus.execute<ListOrdersQuery, Order[]>(
+      new ListOrdersQuery(customerId),
+    );
+
+    return orders.map((order) => OrderResponseDto.fromDomain(order));
+  }
+
+  @Get(':id')
+  async findOne(
+    @Param('id', new ParseUUIDPipe()) id: string,
+  ): Promise<OrderResponseDto> {
+    const order = await this.queryBus.execute<GetOrderQuery, Order>(
+      new GetOrderQuery(id),
+    );
+
+    return OrderResponseDto.fromDomain(order);
   }
 }
