@@ -30,6 +30,6 @@ import { NodeMailerEmailAdapter } from 'src/customer/infrastructure/adapters/nod
           : ConsoleNotificationAdapter,
     },
   ],
-  exports: [CUSTOMER_REPOSITORY],
+  exports: [CUSTOMER_REPOSITORY, NOTIFICATION_SERVICE],
 })
 export class CustomerModule {}

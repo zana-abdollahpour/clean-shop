@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { CustomerModule } from 'src/customer/customer.module';
+import { EventHandlers } from 'src/order/application/event-handlers';
 import { CUSTOMER } from 'src/order/application/ports/customer.port';
 
 import { ORDER_REPOSITORY } from 'src/order/application/ports/order-repository.port';
@@ -19,6 +20,7 @@ import { ProductModule } from 'src/product/product.module';
     { provide: CUSTOMER, useClass: CustomerAdapter },
     { provide: PRODUCT, useClass: ProductAdapter },
     ...OrderCommandHandlers,
+    ...EventHandlers,
   ],
 })
 export class OrderModule {}

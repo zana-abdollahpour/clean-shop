@@ -1,3 +1,4 @@
+import { OrderPlacedEvent } from 'src/order/domain/events/order-placed.event';
 import { OrderItem } from 'src/order/domain/entities/order-item.entity';
 import { OrderId } from 'src/order/domain/value-objects/order-id.vo';
 import { OrderStatus } from 'src/order/domain/value-objects/order-status.vo';
@@ -69,6 +70,8 @@ export class Order extends AggregateRoot {
       createdAt: now,
       updatedAt: now,
     });
+
+    order.apply(new OrderPlacedEvent(id.getValue(), customerId));
 
     return order;
   }
