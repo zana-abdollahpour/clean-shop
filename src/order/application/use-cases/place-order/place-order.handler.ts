@@ -59,6 +59,7 @@ export class PlaceOrderHandler implements ICommandHandler<
         item.productName,
         Money.create(item.unitPrice, item.currency),
         item.quantity,
+        item.discount ? Money.create(item.discount, item.currency) : undefined,
       ),
     );
 
