@@ -9,6 +9,7 @@ import { Money } from 'src/shared/domain/value-objects/money.vo';
 import { OrderConfirmedEvent } from 'src/order/domain/events/order-confirmed.event';
 import { OrderShippedEvent } from 'src/order/domain/events/order-shipped.event';
 import { OrderDeliveredEvent } from 'src/order/domain/events/order-delivered.event';
+import { OrderCanceledEvent } from 'src/order/domain/events/order-canceled.event';
 
 interface OrderProps {
   id: OrderId;
@@ -173,6 +174,21 @@ export class Order extends AggregateRoot {
 
     this.apply(
       new OrderDeliveredEvent(this._id.getValue(), this._customerId.toString()),
+    );
+  }
+
+  cancel(reason: string): void {
+    if (!reason || !reason.trim().length) {
+      throw new DomainException('A Cancellation reason is required');
+    }
+
+    // TODO: persist reason in database
+
+    this._status = this._status.cancel();
+    this._updatedAt = new Date();
+
+    this.apply(
+      new OrderCanceledEvent(this._id.getValue(), this._customerId.toString()),
     );
   }
 }

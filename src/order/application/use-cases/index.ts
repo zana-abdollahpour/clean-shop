@@ -1,3 +1,4 @@
+import { CancelOrderCommandHandler } from 'src/order/application/use-cases/cancel-order/cancel-order.command';
 import { ConfirmOrderHandler } from 'src/order/application/use-cases/confirm-order/confirm-order.handler';
 import { DeliverOrderCommandHandler } from 'src/order/application/use-cases/deliver-order/deliver-order.handler';
 import { PlaceOrderHandler } from 'src/order/application/use-cases/place-order/place-order.handler';
@@ -8,4 +9,5 @@ export const OrderCommandHandlers = [
   ConfirmOrderHandler,
   ShipOrderCommandHandler,
   DeliverOrderCommandHandler,
+  CancelOrderCommandHandler,
 ];

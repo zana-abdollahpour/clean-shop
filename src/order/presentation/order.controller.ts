@@ -11,6 +11,7 @@ import {
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { GetOrderQuery } from 'src/order/application/queries/get-order.query';
 import { ListOrdersQuery } from 'src/order/application/queries/list-orders.query';
+import { cancelOrderCommand } from 'src/order/application/use-cases/cancel-order/cancel-order.handler';
 import { ConfirmOrderCommand } from 'src/order/application/use-cases/confirm-order/confirm-order.command';
 import { DeliverOrderCommand } from 'src/order/application/use-cases/deliver-order/deliver-order.command';
 import { PlaceOrderCommand } from 'src/order/application/use-cases/place-order/place-order.command';
@@ -92,6 +93,16 @@ export class OrderController {
   async deliver(@Param('id', new ParseUUIDPipe()) id: string): Promise<void> {
     await this.commandBus.execute<DeliverOrderCommand, void>(
       new DeliverOrderCommand(id),
+    );
+  }
+
+  @Patch(':id/cancel')
+  async cancel(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body('reason') reason: string,
+  ): Promise<void> {
+    await this.commandBus.execute<cancelOrderCommand, void>(
+      new cancelOrderCommand(id, reason),
     );
   }
 }
