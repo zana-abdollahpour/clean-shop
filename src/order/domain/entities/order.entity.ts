@@ -8,6 +8,7 @@ import { DomainException } from 'src/shared/domain/exception/domain.exception';
 import { Money } from 'src/shared/domain/value-objects/money.vo';
 import { OrderConfirmedEvent } from 'src/order/domain/events/order-confirmed.event';
 import { OrderShippedEvent } from 'src/order/domain/events/order-shipped.event';
+import { OrderDeliveredEvent } from 'src/order/domain/events/order-delivered.event';
 
 interface OrderProps {
   id: OrderId;
@@ -163,6 +164,15 @@ export class Order extends AggregateRoot {
         this._trackingNumber,
         this._customerId.toString(),
       ),
+    );
+  }
+
+  deliver(): void {
+    this._status = this._status.deliver();
+    this._updatedAt = new Date();
+
+    this.apply(
+      new OrderDeliveredEvent(this._id.getValue(), this._customerId.toString()),
     );
   }
 }
