@@ -8,6 +8,7 @@ import { DrizzleModule } from 'src/shared/infrastructure/database/postgres/drizz
 import { ProductModule } from 'src/product/product.module';
 import { CustomerModule } from 'src/customer/customer.module';
 import { OrderModule } from 'src/order/order.module';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { OrderModule } from 'src/order/order.module';
     ProductModule,
     CustomerModule,
     OrderModule,
+    PaymentModule,
   ],
   controllers: [],
   providers: [],
