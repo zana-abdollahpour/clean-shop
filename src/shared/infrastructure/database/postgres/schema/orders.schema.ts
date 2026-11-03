@@ -1,4 +1,3 @@
-import { relations } from 'drizzle-orm';
 import { uuid } from 'drizzle-orm/pg-core';
 import {
   pgTable,
@@ -60,14 +59,3 @@ export const orderItems = pgTable('order_items', {
   discountCurrency: varchar('discount_currency', { length: 3 }),
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });
-
-export const ordersRelations = relations(orders, ({ many }) => ({
-  items: many(orderItems),
-}));
-
-export const orderItemRelations = relations(orderItems, ({ one }) => ({
-  order: one(orders, {
-    fields: [orderItems.orderId],
-    references: [orders.id],
-  }),
-}));
