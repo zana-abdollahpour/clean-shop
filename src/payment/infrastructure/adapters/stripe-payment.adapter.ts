@@ -26,8 +26,10 @@ export class StripePaymentAdapter implements PaymentGatewayPort {
   ): Promise<CreateCheckoutSessionResult> {
     const session = await this.stripeClient.checkout.sessions.create({
       mode: 'payment',
-      success_url: urls?.cancelUrl,
-      cancel_url: urls?.cancelUrl,
+      success_url:
+        urls?.cancelUrl || this.configService.getOrThrow('STRIPE_SUCCESS_URL'),
+      cancel_url:
+        urls?.cancelUrl || this.configService.getOrThrow('STRIPE_CANCEL_URL'),
       metadata: {
         orderId: metadata.orderId,
         paymentId: metadata.paymentId,

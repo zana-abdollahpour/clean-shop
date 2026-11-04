@@ -24,5 +24,6 @@ import { ProductModule } from 'src/product/product.module';
     ...QueryHandlers,
     ...EventHandlers,
   ],
+  exports: [ORDER_REPOSITORY],
 })
 export class OrderModule {}

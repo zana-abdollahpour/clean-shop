@@ -37,6 +37,10 @@ export class PaymentStatus {
     return new PaymentStatus(value as PaymentStatusValue);
   }
 
+  isSucceeded(): boolean {
+    return this.value === PaymentStatusValue.Succeeded;
+  }
+
   getValue() {
     return this.value;
   }
