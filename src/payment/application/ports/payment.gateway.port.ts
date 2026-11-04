@@ -25,5 +25,5 @@ export interface PaymentGatewayPort {
     urls?: CheckoutUrls,
   ): Promise<CreateCheckoutSessionResult>;
 
-  constructWebhookEvent(payload: Buffer, signature: string): any;
+  constructWebhookEvent(payload: Buffer, signature: string): unknown;
 }

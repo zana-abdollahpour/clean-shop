@@ -3,6 +3,7 @@ import { PaymentStatus } from 'src/payment/domain/value-objects/payment-status.v
 import { PaymentId } from 'src/payment/domain/value-objects/payment-id.vo';
 import { Money } from 'src/shared/domain/value-objects/money.vo';
 import { DomainException } from 'src/shared/domain/exception/domain.exception';
+import { PaymentCompletedEvent } from 'src/payment/domain/events/payment-completed.event';
 
 export interface PaymentProps {
   id: PaymentId;
@@ -69,6 +70,20 @@ export class Payment extends AggregateRoot {
 
   isSucceeded(): boolean {
     return this._status.isSucceeded();
+  }
+
+  complete(gatewayTransactionId: string) {
+    this._gatewayTransactionId = gatewayTransactionId;
+    this._status = this._status.transitionToSucceeded();
+    this._updatedAt = new Date();
+
+    this.apply(
+      new PaymentCompletedEvent(
+        this._id.getValue(),
+        this._orderId,
+        this._gatewayTransactionId,
+      ),
+    );
   }
 
   get id() {

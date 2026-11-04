@@ -59,6 +59,19 @@ export class DrizzlePaymentRepository implements PaymentRepositoryPort {
       });
   }
 
+  async findById(id: PaymentId): Promise<Payment | null> {
+    const rows = await this.db
+      .select()
+      .from(payments)
+      .where(eq(payments.id, id.getValue()));
+
+    if (!rows[0]) {
+      return null;
+    }
+
+    return DrizzlePaymentRepository.toDomain(rows[0]);
+  }
+
   async findByOrderId(orderId: OrderId): Promise<Payment | null> {
     const rows = await this.db
       .select()
