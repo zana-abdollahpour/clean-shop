@@ -6,6 +6,7 @@ import { CUSTOMER } from 'src/order/application/ports/customer.port';
 import { ORDER_REPOSITORY } from 'src/order/application/ports/order-repository.port';
 import { PRODUCT } from 'src/order/application/ports/product.port';
 import { QueryHandlers } from 'src/order/application/queries/handlers';
+import { OrderSagas } from 'src/order/application/sagas';
 import { OrderCommandHandlers } from 'src/order/application/use-cases';
 import { CustomerAdapter } from 'src/order/infrastructure/adapters/customer.adapter';
 import { DrizzleOrderRepository } from 'src/order/infrastructure/adapters/drizzle-order.repository';
@@ -21,6 +22,7 @@ import { ProductModule } from 'src/product/product.module';
     { provide: CUSTOMER, useClass: CustomerAdapter },
     { provide: PRODUCT, useClass: ProductAdapter },
     ...OrderCommandHandlers,
+    ...OrderSagas,
     ...QueryHandlers,
     ...EventHandlers,
   ],
